@@ -12,16 +12,12 @@
 
 #include "RS_Codec.h"
 
-
 constexpr int MESSAGE_LENGTH = 24;
 constexpr int ECC_LENGTH = 12;
 
 std::vector<std::string> readFile(std::string filePath) {
     std::ifstream file(filePath);
-
     std::vector<std::string> data;
-
-    int counter = 0;
 
     if (file.is_open()) {
 
@@ -38,8 +34,6 @@ std::vector<std::string> readFile(std::string filePath) {
                     tmp.push_back(0);
                 }
             }
-            counter++;
-
             data.push_back(tmp);
         }
     }

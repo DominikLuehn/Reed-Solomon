@@ -92,7 +92,7 @@ namespace RS {
 				}
 			}
 
-			std::cout << "Rest:" << std::endl;
+			std::cout << "Redundanz:" << std::endl;
 			// Redundanz an das Ende der Nachricht anfuegen
 			std::string tmp;
 			for (int c = msg_length; c < block_length; c++) {
@@ -347,17 +347,9 @@ namespace RS {
 			for (int8_t i = synd.length() - 1, j = 0; i >= 0; i--, j++) {
 				rsynd.at(j) = synd.at(i);
 			}
-
-			// Umgedrehtes eval Polynom
-			Poly re_eval;
-			re_eval = find_error_evaluator(rsynd, errata_loc, errata_loc.length() - 1);
-
-			// Zurueck drehen
+			// eval Polynom
 			Poly e_eval;
-			e_eval.Init(re_eval.length());
-			for (int8_t i = re_eval.length() - 1, j = 0; i >= 0; i--, j++) {
-				e_eval.at(j) = re_eval.at(i);
-			}
+			e_eval = find_error_evaluator(rsynd, errata_loc, errata_loc.length() - 1);
 
 			// Speichert die Fehlerpositionen
 			Poly X;
@@ -395,11 +387,18 @@ namespace RS {
 					err_loc_prime = GF::mul(err_loc_prime, err_loc_prime_temp.at(j));
 				}
 
-				y = GF::poly_eval(re_eval, Xi_inv);
+				y = GF::poly_eval(e_eval, Xi_inv);
 				y = GF::mul(GF::pow(X.at(i), 1), y);
 
 				E.at(err_pos.at(i)) = GF::div(y, err_loc_prime);
 			}
+			
+			std::cout << "Fehlergößenpolynom: " << (int)E.length()  << std::endl;
+			for (int i = 0; i < E.length(); i++) {
+				std::cout << (int)E.at(i) << "|";
+			}
+			std::cout << std::endl;
+
 
 			msg = GF::poly_add(msg, E);
 
